@@ -1,7 +1,7 @@
 Hello Welcome to the most epic dungeon crawler made by some noob in coding lol
 
 1. Start by creating your character using a wide series of options
-2. Explore the dungeon and try to find an escape!
+2. Explore the dungeon and try to find an escape! (no actual canvas because too hard for me)
 3. Choose between fighting or using non violent tactics to make your way through
 4. Find loot and upgrade your character!
 5. I heard there are secrets and LOOOOOOOOORE in the dungeon have fun finding them :)
