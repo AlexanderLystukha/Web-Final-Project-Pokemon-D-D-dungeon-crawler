@@ -41,7 +41,7 @@ function PressEnter(event) {
 }
 
 function ChangeWindow() {
-  window.open("./GameScreens/PlayerInfo.html");
+  window.open("./pages/PlayerInfo.html");
   window.location.reload();
 }
 

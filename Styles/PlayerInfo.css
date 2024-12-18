@@ -41,6 +41,29 @@ h3 {
   margin-top: 50px;
 }
 
+/* #duration {
+  pointer-events: all;
+  color: gray;
+  background: white;
+  border-radius: 5px;
+}
+
+/* Style the thumb */
+/* #duration::-webkit-slider-thumb {
+  width: 20px; 
+  height: 20px; 
+  background: #3498db; 
+  border-radius: 50%; 
+  border: none; 
+  cursor: pointer; 
+  transition: background 0.2s ease-in-out; 
+} */
+
+/* Add hover effect to the thumb */
+/* #duration::-webkit-slider-thumb:hover {
+  background: #2980b9;
+} */
+
 #login {
   display: flex;
   flex-direction: column;

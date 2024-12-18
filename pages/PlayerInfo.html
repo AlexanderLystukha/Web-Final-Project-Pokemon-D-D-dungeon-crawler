@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <title>oh boy you may cry playing this lol</title>
-    <link rel="stylesheet" href="../Styles/PlayerInfo.css" />
+    <link rel="stylesheet" href="../styles/PlayerInfo.css" />
   </head>
   <body>
     <h3>Hello Dungeoneer...</h3>
@@ -39,12 +39,19 @@
         >Must be at least 18 years old to play!</span
       >
       <br />
-      <label class="labels" for="age">Game Duration</label>
-      <input id="duration" name="" type="range" min="0" max="" />
-      <p class="labels">Time: <span></span></p>
+      <label class="labels" for="GameDuration">Game Duration</label>
+      <input
+        id="duration"
+        name="GameDuration"
+        type="range"
+        value="30"
+        min="0"
+        max="60"
+      />
+      <p class="labels">Time: <span id="time">30</span> minutes</p>
       <input id="SubmitBtn" type="submit" value="Enter the dungeon..." />
     </form>
 
-    <script src="../Scripts/PlayerInfo.js"></script>
+    <script type="module" src="../scripts/PlayerInfo.js"></script>
   </body>
 </html>

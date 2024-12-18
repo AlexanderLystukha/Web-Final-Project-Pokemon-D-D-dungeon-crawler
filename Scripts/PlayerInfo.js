@@ -1,13 +1,15 @@
 "use strict";
 
+import { Player } from "../classes/player.js";
+
 $(document).ready(function () {
+  const duration = document.getElementById("duration");
   $("#login").on("submit", function (event) {
     $("#ageErr").hide();
     $("#playerErr").hide();
 
     const player = document.getElementById("playerName").value;
     const age = document.getElementById("ageID").value;
-    const duration = document.getElementById("duration");
 
     if (age < 18) {
       event.preventDefault();
@@ -21,11 +23,13 @@ $(document).ready(function () {
 
     if (age >= 18 && player != "") {
       event.preventDefault();
-      const newPlayer = Player(player, age, duration);
+      duration.style.pointerEvents = none;
+      const newPlayer = new Player(player, age, duration);
       localStorage.setItem("player", newPlayer);
       SubmitSuccessful();
     }
   });
+  duration.addEventListener("input", DisplayDuration);
 });
 
 function SubmitSuccessful() {
@@ -52,4 +56,9 @@ function SubmitSuccessful() {
 
     window.close();
   }, 2000);
+}
+
+function DisplayDuration() {
+  const newDuration = document.getElementById("duration").value;
+  $("#time").text(newDuration);
 }

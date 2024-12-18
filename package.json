@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "dependencies": {
     "commonjs": "^0.0.1",
     "jsdom": "^25.0.1",

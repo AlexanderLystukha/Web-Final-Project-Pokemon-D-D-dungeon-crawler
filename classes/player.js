@@ -1,4 +1,4 @@
-class Player {
+export class Player {
   constructor(name, age, gameDuration) {
     this.name = name;
     this.age = age;
