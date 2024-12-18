@@ -10,8 +10,13 @@
   <body>
     <h3>Hello Dungeoneer...</h3>
 
-    <form id="login" action="pages/gameplay.html" target="_blank" method="post">
-      <label for="playerName">Your Name</label>
+    <form
+      id="login"
+      action="./PickCharacter.html"
+      target="_blank"
+      method="post"
+    >
+      <label class="labels" for="playerName">Your Name</label>
       <input
         id="playerName"
         name="playerName"
@@ -21,7 +26,7 @@
       />
       <span id="playerErr" class="error">You need to input a username!</span>
       <br />
-      <label for="age">Your Age</label>
+      <label class="labels" for="age">Your Age</label>
       <input
         id="ageID"
         name="age"
@@ -31,10 +36,14 @@
         max="120"
       />
       <span id="ageErr" class="error"
-        >Must be at least 6 years old to play!</span
+        >Must be at least 18 years old to play!</span
       >
       <br />
+      <label class="labels" for="age">Game Duration</label>
+      <input id="duration" name="" type="range" />
       <input id="SubmitBtn" type="submit" value="Enter the dungeon..." />
     </form>
+
+    <script src="../Scripts/PlayerInfo.js"></script>
   </body>
 </html>
