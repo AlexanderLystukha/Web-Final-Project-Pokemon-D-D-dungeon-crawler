@@ -1,0 +1,50 @@
+@font-face {
+    font-family: "TitleScreen";
+    src: url("../Fonts/snowdin.otf/snowdin.otf");
+  }
+
+html,
+body{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background-color: black;
+    color: white;
+}
+
+h3{
+    font-family: "TitleScreen";
+    text-align: center;
+    font-size: 3em;
+}
+
+#playerName, #ageID{
+    height: 3rem;
+    width: 20rem;
+    margin: 50px;
+}
+
+#login{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#SubmitBtn{
+    background-color: black;
+    border-color: white;
+    border-width: 5px;
+    color: white;
+    height: 3rem;
+    width: 14rem;
+}
+.error{
+    justify-content: end;
+    display: none;
+    color: red;
+}

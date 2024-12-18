@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <title>oh boy you may cry playing this lol</title>
+    <link rel="stylesheet" href="../Styles/PlayerInfo.css" />
+</head>
+<body>
+    <h3>
+        Hello Dungeoneer...
+    </h3>
+
+    <form id="login" action="pages/gameplay.html" target="_blank" method="post">
+
+        <label for="playerName">Your Name</label>
+        <input id="playerName" name="playerName" type="text" placeholder="Username" value="">
+        <span id="playerErr" class="error">You need to input a username!</span>
+        <br>
+        <label for="age">Your Age</label>
+        <input id="ageID" name="age" type="number" placeholder="Age" min="0" max="120">
+        <span id="ageErr" class="error">Must be at least 6 years old to play!</span>
+        <br>
+        <input id="SubmitBtn" type="submit" value="Enter the dungeon...">
+
+    </form>
+
+</body>
+</html>

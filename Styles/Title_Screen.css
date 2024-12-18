@@ -15,7 +15,7 @@ body {
   padding: 0;
 }
 
-.TitleScreen {
+#TitleScreen {
   display: flex;
   width: 100%;
   height: 100%;
@@ -26,6 +26,7 @@ body {
 }
 
 h1 {
+  display: inline-block;
   font-family: "TitleScreen";
   text-align: center;
   font-size: 8em;
@@ -33,6 +34,7 @@ h1 {
 }
 
 h3 {
+  display: inline-block;
   font-family: "LowerText";
   text-align: center;
   font-size: 3.5em;
