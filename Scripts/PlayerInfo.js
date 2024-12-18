@@ -7,7 +7,7 @@ $(document).ready(function () {
 
     const player = document.getElementById("playerName").value;
     const age = document.getElementById("ageID").value;
-    const duration = document.getElementById;
+    const duration = document.getElementById("duration");
 
     if (age < 18) {
       event.preventDefault();
@@ -21,7 +21,8 @@ $(document).ready(function () {
 
     if (age >= 18 && player != "") {
       event.preventDefault();
-      localStorage.setItem("username", player);
+      const newPlayer = Player(player, age, duration);
+      localStorage.setItem("player", newPlayer);
       SubmitSuccessful();
     }
   });
