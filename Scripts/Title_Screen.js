@@ -1,3 +1,5 @@
+"use strict";
+
 $(document).ready(function () {
   let index = 0;
   const text = document.getElementById("PressEnter");

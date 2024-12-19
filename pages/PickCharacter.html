@@ -3,7 +3,77 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../styles/PickCharacter.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <title>Choose wisely my padawan...</title>
   </head>
-  <body></body>
+  <body>
+    <div class="box">
+      <p>Classes</p>
+      <div id="ClassContainer">
+        <div class="image-container">
+          <img class="Class" data-src="../public/Classes/fighter.png" />
+          <div class="ClassBox">Fighter, strong and determined</div>
+        </div>
+
+        <div class="image-container">
+          <img class="Class" data-src="../public/Classes/monk.png" />
+          <div class="ClassBox">Monk, agile and wise</div>
+        </div>
+
+        <div class="image-container">
+          <img class="Class" data-src="../public/Classes/paladin.png" />
+          <div class="ClassBox">Paladin, tanky and can hit hard</div>
+        </div>
+
+        <div class="image-container">
+          <img class="Class" data-src="../public/Classes/rogue.png" />
+          <div class="ClassBox">Rogue, sneaky and efficient</div>
+        </div>
+
+        <div class="image-container">
+          <img class="Class" data-src="../public/Classes/sorcerer.png" />
+          <div class="ClassBox">Sorcerer, magic and stuff</div>
+        </div>
+
+        <div class="image-container">
+          <img class="Class" data-src="../public/Classes/bard.png" />
+          <div class="ClassBox">Bard, Really charismatic and does music</div>
+        </div>
+
+        <div class="image-container">
+          <img class="Class" data-src="../public/Classes/cleric.png" />
+          <div class="ClassBox">Cleric, divine magic or something</div>
+        </div>
+
+        <div class="image-container">
+          <img class="Class" data-src="../public/Classes/druid.png" />
+          <div class="ClassBox">Fighter, be one with the nature</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <p>Races</p>
+      <div id="RaceContainer">
+        <div class="image-container">
+          <img class="Race" data-src="../public/Races/human.png" />
+          <div class="ClassBox">Human, reliable and solid</div>
+        </div>
+
+        <div class="image-container">
+          <img class="Race" data-src="../public/Races/elf.png" />
+          <div class="ClassBox">Elf, slender and free</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="PlayerContainer">
+      <!-- dynamically put image of character with "playerImage" id in here-->
+      <!-- dynamically put p tag of name in here-->
+      <!-- dynamically put p tag of press enter here in here-->
+    </div>
+
+    <script src="../scripts/PickCharacter.js"></script>
+  </body>
 </html>

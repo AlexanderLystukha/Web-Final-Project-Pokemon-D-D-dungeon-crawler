@@ -23,7 +23,7 @@ $(document).ready(function () {
 
     if (age >= 18 && player != "") {
       event.preventDefault();
-      duration.style.pointerEvents = none;
+      //duration.style.pointerEvents = none;
       const newPlayer = new Player(player, age, duration);
       localStorage.setItem("player", newPlayer);
       SubmitSuccessful();
@@ -53,7 +53,7 @@ function SubmitSuccessful() {
 
   setTimeout(function () {
     window.open("./PickCharacter.html");
-
+    clearInterval(changeColor);
     window.close();
   }, 2000);
 }

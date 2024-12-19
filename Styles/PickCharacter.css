@@ -1,0 +1,103 @@
+@font-face {
+  font-family: "Alphys";
+  src: url("../Fonts/alphys.otf/alphys.otf");
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  background-color: black;
+  color: white;
+  justify-content: space-around;
+  align-items: center;
+  font-family: Alphys;
+}
+
+p {
+  font-size: 1.2em;
+}
+
+#RaceContainer,
+#ClassContainer {
+  margin-top: 0;
+  display: flex;
+  border: 5px white solid;
+}
+
+#ClassContainer {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin-right: 0;
+  width: 400px;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+#RaceContainer {
+  padding-top: 25px;
+  padding-bottom: 25px;
+  padding-left: 20px;
+  padding-right: 20px;
+  height: 45%;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+#PlayerContainer {
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#playerImage {
+  border: 5px white solid;
+  height: 700px;
+  width: 450px;
+}
+.Class,
+.Race {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  height: 150px;
+  width: 150px;
+  border: 5px white solid;
+  object-fit: cover;
+}
+
+.box {
+  margin: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-container {
+  font-size: 0.8em;
+  position: relative; /* Position the info box relative to the image */
+}
+
+.ClassBox {
+  position: absolute;
+  bottom: 10px; /* Position the info box at the bottom of the image */
+  left: 50%;
+  transform: translateX(-50%); /* Center the info box */
+  background-color: rgba(0, 0, 0, 0.7); /* Dark background */
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  display: none; /* Initially hidden */
+  opacity: 0; /* Start with transparency */
+  transition: opacity 0.3s ease; /* Smooth fade-in transition */
+}
+
+.image-container:hover .ClassBox {
+  display: block; /* Show the info box on hover */
+  opacity: 1; /* Make the info box fully visible */
+}
