@@ -23,9 +23,10 @@ $(document).ready(function () {
 
     if (age >= 18 && player != "") {
       event.preventDefault();
-      //duration.style.pointerEvents = none;
-      const newPlayer = new Player(player, age, duration);
-      localStorage.setItem("player", newPlayer);
+      const gameDuration = duration.value;
+      const newPlayer = new Player(player, age, gameDuration);
+      localStorage.setItem("player", JSON.stringify(newPlayer));
+      console.log(newPlayer);
       SubmitSuccessful();
     }
   });

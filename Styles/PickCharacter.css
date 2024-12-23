@@ -15,6 +15,7 @@ body {
   justify-content: space-around;
   align-items: center;
   font-family: Alphys;
+  opacity: 1;
 }
 
 p {
@@ -60,6 +61,7 @@ p {
   border: 5px white solid;
   height: 700px;
   width: 450px;
+  object-fit: contain;
 }
 .Class,
 .Race {
