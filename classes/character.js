@@ -1,11 +1,11 @@
 export class Character {
-  constructor(className, spells, stats) {
+  constructor(className, spells, stats, imageURL) {
     this.class = className;
     this.spells = spells;
     this.stats = stats;
-    this.health = 100;
-    this.movementSpeed = 30;
-    this.equipment = [];
+    this.Health = 100;
+    this.Movement = 30;
+    this.image = imageURL;
   }
 
   get ClassType() {
@@ -38,5 +38,13 @@ export class Character {
 
   set Equipment(newEquipment) {
     this.equipment = newEquipment;
+  }
+
+  get CharacterImage() {
+    return this.image;
+  }
+
+  set CharacterImage(imageURL) {
+    this.image = imageURL;
   }
 }

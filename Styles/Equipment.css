@@ -1,0 +1,50 @@
+@font-face {
+  font-family: "ScaryFont ig";
+  src: url("../Fonts/snowdin.otf/snowdin.otf");
+}
+
+@font-face {
+  font-family: "Alphys";
+  src: url("../Fonts/alphys.otf/alphys.otf");
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  background-color: black;
+  color: white;
+}
+
+h2 {
+  font-family: ScaryFont ig;
+  text-align: center;
+  font-size: 3em;
+}
+
+button {
+  font-family: Alphys;
+  font-size: 0.8em;
+  background-color: black;
+  border: 5px white solid;
+  color: white;
+  height: 3rem;
+  width: 14rem;
+  margin: 50px;
+  border-radius: 5px;
+}
+
+button:hover {
+  border: 5px #c9a202 solid;
+  color: #c9a202;
+}
+
+#choicePrompt {
+  font-family: Alphys;
+  text-align: center;
+}

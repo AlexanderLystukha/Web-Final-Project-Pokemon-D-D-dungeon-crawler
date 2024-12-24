@@ -122,34 +122,13 @@ function PressEnter(event, className) {
     };
 
     GetCharacterThings(className, stats);
-
-    const screen = document.getElementsByTagName("body");
-    screen[0].style.opacity = 1;
-    FadeScreen(screen[0], 5000);
-    setTimeout(ChangeWindow, 5000);
+    setTimeout(ChangeWindow, 1000);
   }
 }
 
 function ChangeWindow() {
   window.open("../pages/Equipment.html");
   window.close();
-}
-
-function FadeScreen(screen, duration) {
-  let opacity = 1;
-  let interval = 25;
-  let increment = 1 / (duration / interval);
-
-  const fade = setInterval(function () {
-    opacity -= increment;
-
-    if (opacity >= 1) {
-      opacity = 1;
-      clearInterval(fade);
-    }
-
-    screen.style.opacity = opacity;
-  }, interval);
 }
 
 function GetRandomInt(min, max) {
@@ -172,7 +151,14 @@ async function GetCharacterThings(className, stats) {
 
   FetchSpells(classData).then((spells) => {
     GenerateStats(stats);
-    const character = new Character(className, spells, stats);
+
+    const character = new Character(
+      className,
+      spells,
+      stats,
+      document.getElementById("playerImage").src
+    );
+    console.log(character);
     localStorage.setItem("character", JSON.stringify(character));
     localStorage.setItem(
       "equipment",

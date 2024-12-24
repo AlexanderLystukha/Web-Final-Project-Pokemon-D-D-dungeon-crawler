@@ -3,7 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../styles/Gameplay.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <title>Where are am I?</title>
   </head>
-  <body></body>
+  <body>
+    <div id="player">
+      <div>
+        <img id="playerImage" src="../public/Characters/sorcerer-elf.png" />
+        <p id="playerName">player name</p>
+      </div>
+
+      <div id="playerStats">
+        <p>Strength: <span id="strength"></span></p>
+        <p>Dexterity: <span id="dexterity"></span></p>
+        <p>Constitution: <span id="constitution"></span></p>
+        <p>Intelligence: <span id="intelligence"></span></p>
+        <p>Wisdom: <span id="wisdom"></span></p>
+        <p>Charisma: <span id="charisma"></span></p>
+      </div>
+    </div>
+
+    <div id="game">
+      <div id="playerView">
+        <img />
+        <div id="coolShadowThing"></div>
+      </div>
+      <div id="gameText"></div>
+    </div>
+
+    <div id="buttons">
+      <p id="continueButton">[Enter] Continue</p>
+      <p id="invButton">[Tab] Inventory</p>
+    </div>
+
+    <script src="../scripts/Gameplay.js"></script>
+  </body>
 </html>

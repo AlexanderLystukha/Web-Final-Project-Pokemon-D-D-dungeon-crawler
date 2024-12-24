@@ -60,6 +60,7 @@ function SubmitSuccessful() {
 }
 
 function DisplayDuration() {
-  const newDuration = document.getElementById("duration").value;
-  $("#time").text(newDuration);
+  const difficultyArray = ["Baby Mode", "Easy", "Normal", "Hard", "Uh oh"];
+  const newDifficulty = document.getElementById("duration").value;
+  $("#difficulty").text(difficultyArray[newDifficulty - 1]);
 }
