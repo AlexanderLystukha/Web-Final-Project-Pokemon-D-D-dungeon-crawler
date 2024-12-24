@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <title>Battle!</title>
+    <link rel="stylesheet" href="../styles/Battle.css" />
+  </head>
+  <body>
+    <div id="battle">
+      <img id="playerImage" src="../public/default character.png" />
+      <canvas id="fightBox"></canvas>
+      <img id="pokemonImage" src="../public/default character.png" />
+    </div>
+
+    <div id="playerUI">
+      <div id="battleDialogue">
+        <!-- fight dialogue go here -->
+      </div>
+
+      <div id="playerBattleInfo">
+        <div id="healthInfo">
+          <p id="playerName">test</p>
+          <div id="health-bar-container">
+            <div id="healthBar"></div>
+          </div>
+          <p id="healthCount">100<span id="maxHealth">/100</span></p>
+        </div>
+
+        <button>Fight</button>
+        <button>Act</button>
+        <button>Items</button>
+        <button>Spare</button>
+      </div>
+    </div>
+  </body>
+</html>

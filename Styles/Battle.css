@@ -1,0 +1,117 @@
+@font-face {
+  font-family: "Alphys";
+  src: url("../Fonts/alphys.otf/alphys.otf");
+}
+
+html,
+body {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: black;
+  color: white;
+  /* align-items: center; */
+  justify-content: center;
+}
+
+body {
+  display: flex;
+  width: 80%;
+  align-items: center;
+  font-family: Alphys;
+  opacity: 1;
+  flex-direction: column;
+}
+
+button {
+  font-family: Alphys;
+  font-size: 0.8em;
+  background-color: black;
+  border: 5px #fa991a solid;
+  color: #fa991a;
+  height: 3rem;
+  width: 5rem;
+  border-radius: 5px;
+}
+
+button:hover {
+  border: 5px #eec213 solid;
+  color: #eec213;
+}
+
+#playerImage,
+#pokemonImage {
+  height: 250px;
+  width: 250px;
+  object-fit: contain;
+}
+
+#fightBox {
+  width: 300px;
+  height: 300px;
+  background-color: rgba(0, 0, 0, 0.9);
+  background: ;
+  border: 5px #ffffff solid;
+}
+
+#battle {
+  display: flex;
+  height: 60%;
+  width: 80%;
+  background-image: url(../public/battlebackground.png);
+  background-size: cover;
+  background-position: center;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+#health-bar-container {
+  display: flex;
+  width: 200px;
+  height: 30px;
+  border: 4px solid #e2e2e2;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+#healthBar {
+  height: 100%;
+  /* Default full health */
+  width: 100%;
+  /* Default full health */
+  background-color: #ffea2e;
+  /* Smooth transition when health changes */
+  transition: width 0.3s ease;
+}
+
+#playerUI {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+}
+
+#battleDialogue {
+  width: 600px;
+  height: 150px;
+  border: 4px solid #e2e2e2;
+}
+
+#playerBattleInfo {
+  margin-top: 20px;
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+#healthInfo {
+  display: flex;
+  width: 400px;
+  justify-content: space-evenly;
+  align-items: center;
+}
