@@ -87,12 +87,29 @@ body {
 
 /* var(--sds-size-depth-200) */
 
-#gameText {
+#textBox {
   width: 900px;
   height: 400px;
   border: 10px solid #fff;
   border-radius: 6px;
   background: #000;
+}
+
+#gameText,
+#optionsList {
+  line-height: 25px;
+  padding: 20px;
+  padding-bottom: 0;
+  border-width: 0;
+  font-size: 0.7em;
+}
+
+#optionsList {
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 #buttons {
@@ -106,4 +123,12 @@ body {
 #continueButton,
 #invButton {
   align-content: flex-start;
+}
+
+.choice {
+  margin-left: 5px;
+}
+
+.selected {
+  color: #eec213;
 }
