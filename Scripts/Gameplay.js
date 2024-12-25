@@ -105,6 +105,8 @@ function selectOption(option) {
     return StartGame();
   }
 
+  inventory = Object.assign(inventory, option.setInv);
+
   if (option.encounter) {
     localStorage.setItem("pokemon", option.encounter);
     localStorage.setItem("prompt", option.encounterText);
@@ -114,7 +116,6 @@ function selectOption(option) {
     window.close();
   }
 
-  inventory = Object.assign(inventory, option.setInv);
   showTextDialogue(nextDialogueId);
 }
 

@@ -11,7 +11,7 @@ let defenseModifier, attackModifier;
 let pokemonImage;
 let pokemon;
 let bestMove;
-let pokemonHealth;
+let pokemonHealth, maxPokemonHealth;
 let playerHealth;
 
 // const c = document.getElementById("fightBox");
@@ -58,7 +58,6 @@ function updateSelection() {
 
 function OptionSelection() {
   return new Promise((resolve) => {
-    console.log("hi1");
     battleDialogue.addEventListener("keydown", KeySelect);
 
     document.addEventListener("keydown", (event) => {
@@ -74,7 +73,6 @@ function OptionSelection() {
 }
 
 function KeySelect(event) {
-  console.log("hi");
   if (event.key === "ArrowDown") {
     // Move down to the next item
     selectedIndex = (selectedIndex + 1) % possibleChoices.length; // Loop back to the top
@@ -132,7 +130,7 @@ async function GameOver() {
   localStorage.removeItem("prompt");
   localStorage.removeItem("pokemon");
 
-  if ((choice = 0)) {
+  if (choice === 0) {
     window.open("../pages/PickCharacter.html");
     window.close();
   } else {
@@ -203,12 +201,10 @@ async function Battle(pokemon) {
   console.log(character);
   console.log(player);
   console.log(pokemon);
-  console.log(playerHealth);
+  console.log(bestMove);
 
   fightBtn.addEventListener("click", FightOption);
-  actBtn.addEventListener("click", () => {
-    ChooseSpell();
-  });
+  actBtn.addEventListener("click", ChooseSpell);
 }
 
 async function FightOption() {
@@ -216,12 +212,32 @@ async function FightOption() {
     battleDialogue.removeChild(battleDialogue.firstChild);
   }
 
+  let weapon;
+  let isWeapon = false;
+  console.log(character.Equipment);
+  for (let equipment in character.Equipment) {
+    if (character.Equipment[equipment].option_type === "multiple") {
+      character.Equipment[equipment].items.forEach((item) => {
+        isWeapon = CheckEquipment(item);
+      });
+    } else {
+      isWeapon = CheckEquipment(equipment);
+    }
+
+    if (isWeapon) {
+      weapon = equipment;
+      break;
+    }
+  }
+
+  let attackRoll = await GetWeaponDamage(weapon);
+
   //damage the pokemon
-  let damage = CalculateDamage(character, bestMove);
+  let damage = CalculateDamage(character, attackRoll);
   pokemonHealth = decreaseHealth(
     damage,
     pokemonHealth,
-    pokemon.stats[0].base_stat,
+    maxPokemonHealth,
     "healthBarPokemon"
   );
 
@@ -242,19 +258,19 @@ async function FightOption() {
   await PokemonAttack(bestMove, character);
 }
 
-async function PokemonAttack(move, player) {
+async function PokemonAttack(move) {
   setTimeout(() => {
     //if (hit) {
     let damage = CalculateDamage(pokemon, move);
     playerHealth = decreaseHealth(
       damage,
       playerHealth,
-      player.health,
+      character.health,
       "healthBar"
     );
 
     let damageText = document.createElement(`div`);
-    damageText.innerHTML = `${pokemonName} dealt ${damage} to you!`;
+    damageText.innerHTML = `${pokemonName} used ${move.name}! It dealt ${damage} to you!`;
     battleDialogue.appendChild(damageText);
 
     document.getElementById(
@@ -267,6 +283,19 @@ async function PokemonAttack(move, player) {
     // }
   }, 1000);
 }
+
+async function CheckEquipment(item) {
+  let response = await fetch(`https://www.dnd5eapi.co${item.of.url}`);
+  let equipment = response.json();
+
+  if (equipment.equipment_category.name === "Weapon") {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function GetWeaponDamage(weapon) {}
 
 async function ChooseSpell() {
   battleDialogue.innerHTML = "";
@@ -281,12 +310,88 @@ async function ChooseSpell() {
   selectedIndex = 0;
   possibleChoices = document.querySelectorAll(`.choice`);
   await OptionSelection();
-  console.log("p");
+  await SelectedSpell();
+  await PokemonAttack(bestMove);
 }
 
-function CalculateDamage(attacker, move) {
+async function SelectedSpell() {
+  const response = await fetch(
+    `https://www.dnd5eapi.co${character.spells[choice].url}`
+  );
+  const spellDetails = await response.json();
+
+  if (spellDetails.damage !== undefined) {
+    let diceRoll = spellDetails.damage.damage_at_slot_level[3];
+    let damage = CalculateDamage(character, diceRoll, "spell");
+    pokemonHealth = decreaseHealth(
+      damage,
+      pokemonHealth,
+      maxPokemonHealth,
+      "healthBarPokemon"
+    );
+
+    battleDialogue.innerHTML = `You casted ${spellDetails.name}! You dealt ${damage} to ${pokemonName}!`;
+  } else if (spellDetails.heal_at_slot_level !== undefined) {
+    let healing = CalculateHealing(spellDetails.heal_at_slot_level[3]);
+    playerHealth = increaseHealth(
+      healing,
+      playerHealth,
+      character.health,
+      "healthBar"
+    );
+
+    battleDialogue.innerHTML = `You casted ${spellDetails.name}! You healed ${healing} damage!`;
+
+    document.getElementById(
+      "healthCount"
+    ).innerHTML = `${playerHealth}<span id="maxHealth">/100</span>`;
+  } else {
+    battleDialogue.innerHTML =
+      `You tried to cast ${spellDetails.name}! ${pokemonName} seemed confused by your hand movement. <br>` +
+      `It had no effect!`;
+  }
+}
+
+function CalculateHealing(move) {
+  const healRoll = move.match(/(\d+)d(\d+)\s*\+\s*(\d+)/);
+  let healing = 0;
+  let numDice = parseInt(healRoll[1], 10);
+  let numSides = parseInt(healRoll[2], 10);
+  let bonus = healRoll[3] ? parseInt(healRoll[3], 10) : 0;
+
+  if (bonus === "MOD") {
+    bonus = character.stats.Intelligence;
+  }
+
+  for (let roll = 0; roll < numDice; roll++) {
+    healing += GetRandomInt(1, numSides);
+  }
+
+  return healing + bonus;
+}
+
+function CalculateDamage(attacker, move, moveType) {
+  let attackStat;
+  let defenderDefense;
+  let movePower;
+  let attackerLevel;
+
   if (attacker.name === character.name) {
-    return 1;
+    let attackRoll = move.match(/(\d+)d(\d+)/);
+    let damageDealt = 0;
+    for (let roll = 0; roll < attackRoll[1]; roll++) {
+      damageDealt += GetRandomInt(1, attackRoll[2]);
+    }
+
+    if (moveType === "spell") {
+      attackStat = (attacker.stats.Intelligence + 10) * 4;
+      defenderDefense = pokemon.stats[4].base_stat;
+    } else {
+      attackStat = (attacker.stats.Strength + 10) * 4;
+      defenderDefense = pokemon.stats[2].base_stat;
+    }
+    movePower = damageDealt * 4;
+    attackerLevel = 30;
   } else {
     let attackStatIndex;
     if (move.damage_class.name === "physical") {
@@ -295,15 +400,19 @@ function CalculateDamage(attacker, move) {
       attackStatIndex = 3;
     }
 
-    return Math.floor(
-      (((2 * 40) / 5 + 2) *
-        attacker.stats[attackStatIndex].base_stat *
-        move.power) /
-        (((character.stats.Dexterity - 10) / 2 + 10) * 4) /
-        50 +
-        2
-    );
+    movePower = move.power;
+    attackStat = attacker.stats[attackStatIndex].base_stat;
+    defenderDefense = ((character.stats.Dexterity - 10) / 2 + 10) * 4;
+    attackerLevel = 40;
   }
+
+  return Math.floor(
+    ((((2 * attackerLevel) / 5 + 2) * attackStat * movePower) /
+      defenderDefense /
+      50 +
+      2) *
+      (player.difficulty / 3)
+  );
 }
 
 async function GetPokemonBestAttack(pokemon) {
@@ -336,6 +445,7 @@ async function GetPokemonBestAttack(pokemon) {
 function updateHealthBar(health, maxHealth, characterHealthBar) {
   const healthBar = document.getElementById(characterHealthBar);
   // update the width dynamically
+  console.log(health * 100);
   healthBar.style.width = `${(health * 100) / maxHealth}%`;
 }
 
@@ -348,17 +458,20 @@ function decreaseHealth(amount, health, maxHealth, characterHealthBar) {
 }
 
 // Call this function to increase health
-function increaseHealth(amount, health) {
+function increaseHealth(amount, health, maxHealth, characterHealthBar) {
   // Pro Tip 👉 Prevent health from going above 100
   health = Math.min(100, health + amount);
-  updateHealthBar();
+  console.log(maxHealth);
+  updateHealthBar(health, maxHealth, characterHealthBar);
+  return health;
 }
 
 /* CALLING PLACE IS HERE BEFORE ARE FUNCTIONS */
 
 GetPokemonInfo().then((result) => {
   pokemon = result;
-  pokemonHealth = pokemon.stats[0].base_stat;
+  pokemonHealth = pokemon.stats[0].base_stat * (player.difficulty / 3);
+  maxPokemonHealth = pokemonHealth;
   playerHealth = character.health;
   PopulateScreenInfo();
   Battle(pokemon);

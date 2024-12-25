@@ -21,8 +21,8 @@ export class Player {
     return this.name;
   }
 
-  set playerDifficulty(gameDuration) {
-    this.duration = gameDuration;
+  set playerDifficulty(gameDifficulty) {
+    this.difficulty = gameDifficulty;
   }
 
   get playerDifficulty() {
