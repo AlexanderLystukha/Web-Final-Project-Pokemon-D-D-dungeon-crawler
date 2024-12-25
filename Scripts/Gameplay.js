@@ -35,11 +35,11 @@ function updateSelection() {
 
 function OptionSelection() {
   return new Promise((resolve) => {
-    choicesContainer.addEventListener("keydown", test);
+    choicesContainer.addEventListener("keydown", KeySelect);
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
-        choicesContainer.removeEventListener("keydown", test);
+        choicesContainer.removeEventListener("keydown", KeySelect);
         resolve();
       }
     });
@@ -49,7 +49,7 @@ function OptionSelection() {
   });
 }
 
-function test(event) {
+function KeySelect(event) {
   if (event.key === "ArrowDown") {
     // Move down to the next item
     selectedIndex = (selectedIndex + 1) % possibleChoices.length; // Loop back to the top
@@ -111,6 +111,7 @@ function selectOption(option) {
     localStorage.setItem("save", nextDialogueId);
     localStorage.setItem("inventory", JSON.stringify(inventory));
     window.open("../pages/Battle.html");
+    window.close();
   }
 
   inventory = Object.assign(inventory, option.setInv);

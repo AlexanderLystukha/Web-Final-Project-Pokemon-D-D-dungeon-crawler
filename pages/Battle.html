@@ -10,12 +10,17 @@
   <body>
     <div id="battle">
       <img id="playerImage" src="../public/default character.png" />
-      <canvas id="fightBox"></canvas>
-      <img id="pokemonImage" src="../public/default character.png" />
+      <!-- <canvas id="fightBox"></canvas> -->
+      <div id="pokemonContainer">
+        <div id="health-bar-container">
+          <div id="healthBarPokemon"></div>
+        </div>
+        <img id="pokemonImage" src="../public/default character.png" />
+      </div>
     </div>
 
     <div id="playerUI">
-      <div id="battleDialogue">
+      <div id="battleDialogue" tabindex="0">
         <!-- fight dialogue go here -->
       </div>
 
@@ -28,10 +33,20 @@
           <p id="healthCount">100<span id="maxHealth">/100</span></p>
         </div>
 
-        <button>Fight</button>
-        <button>Act</button>
-        <button>Items</button>
-        <button>Spare</button>
+        <button id="fight">Fight</button>
+        <button id="act">Act</button>
+
+        <audio id="battleMusic" autoplay loop>
+          <source
+            src="../public/music/Pokemon Black & White 2 OST Legendary Battle Music.mp3"
+            type="audio/mp3"
+          />
+          Browser does not support audio element
+        </audio>
+        <audio id="selectSFX">
+          <source src="../public/music/snd_select.wav" type="audio/wav" />
+        </audio>
+        <script defer src="../scripts/Battle.js"></script>
       </div>
     </div>
   </body>

@@ -1,8 +1,8 @@
 export class Character {
   constructor(className, spells, stats, imageURL) {
-    this.class = className;
-    this.spells = spells;
-    this.stats = stats;
+    this.ClassType = className;
+    this.SpellList = spells;
+    this.Statistics = stats;
     this.Health = 100;
     this.Movement = 30;
     this.image = imageURL;
@@ -12,12 +12,24 @@ export class Character {
     return this.class;
   }
 
+  set ClassType(className) {
+    this.class = className;
+  }
+
   get SpellList() {
     return this.spells;
   }
 
+  set SpellList(usableSpells) {
+    this.spells = usableSpells;
+  }
+
   get Statistics() {
     return this.stats;
+  }
+
+  set Statistics(statistics) {
+    this.stats = statistics;
   }
 
   set Health(health) {

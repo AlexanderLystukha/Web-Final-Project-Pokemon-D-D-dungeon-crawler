@@ -1,8 +1,8 @@
 export class Player {
-  constructor(name, age, gameDuration) {
-    this.name = name;
-    this.age = age;
-    this.duration = gameDuration;
+  constructor(name, age, gameDifficulty) {
+    this.playerName = name;
+    this.playerAge = age;
+    this.playerDifficulty = gameDifficulty;
   }
 
   set playerName(name) {
@@ -21,11 +21,11 @@ export class Player {
     return this.name;
   }
 
-  set playerDuration(gameDuration) {
+  set playerDifficulty(gameDuration) {
     this.duration = gameDuration;
   }
 
-  get playerDuration() {
+  get playerDifficulty() {
     return this.duration;
   }
 }

@@ -122,7 +122,7 @@ function PressEnter(event, className) {
     };
 
     GetCharacterThings(className, stats);
-    setTimeout(ChangeWindow, 1000);
+    ChangeWindow();
   }
 }
 
