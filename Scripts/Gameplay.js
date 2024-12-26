@@ -12,6 +12,12 @@ const choicesContainer = document.getElementById("optionsList");
 let possibleChoices = document.querySelectorAll(`.choice`);
 let choice = 0;
 
+const buttonSFX = document.getElementById("selectSFX");
+buttonSFX.volume = 0.3;
+
+const enterSFX = document.getElementById("enterSFX");
+enterSFX.volume = 0.3;
+
 // Populate all character info to the screen
 function PopulatePlayerInfo(player, character) {
   const playerImage = document.getElementById(`playerImage`);
@@ -54,15 +60,18 @@ function OptionSelection() {
 function KeySelect(event) {
   if (event.key === "ArrowRight") {
     // Move down to the next item
+    buttonSFX.play();
     selectedIndex = (selectedIndex + 1) % possibleChoices.length; // Loop back to the top
     updateSelection();
   } else if (event.key === "ArrowLeft") {
     // Move up to the previous item
+    buttonSFX.play();
     selectedIndex =
       (selectedIndex - 1 + possibleChoices.length) % possibleChoices.length; // Loop back to the bottom
     updateSelection();
   } else if (event.key === "Enter") {
     // Handle selection (e.g., display the selected option)
+    enterSFX.play();
     choice = possibleChoices[selectedIndex].textContent
       .match(/\d+/g)
       .map(Number);

@@ -65,7 +65,7 @@ button:hover {
   display: flex;
   height: 60%;
   width: 80%;
-  background-image: url(../public/battlebackground.png);
+  background-image: url(../public/backgrounds/battlebackground.png);
   background-size: cover;
   background-position: center;
   justify-content: space-evenly;

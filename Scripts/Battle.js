@@ -1,13 +1,27 @@
 "use strict";
 
+//#region localStorage variables
 const player = JSON.parse(localStorage.getItem("player"));
 const character = JSON.parse(localStorage.getItem("character"));
 const pokemonName = localStorage.getItem("pokemon");
 const initialDialogue = localStorage.getItem("prompt");
+//#endregion
+
+//#region containers that need to be global
 const battleDialogue = document.getElementById("battleDialogue");
+let possibleChoices = document.querySelectorAll(`.choice`);
+//#endregion
+
+//#region Music variables
 const battleOST = document.getElementById("battleMusic");
 const battleBG = document.getElementById("battle");
-let possibleChoices = document.querySelectorAll(`.choice`);
+const buttonSFX = document.getElementById("selectSFX");
+buttonSFX.volume = 0.3;
+const spellSFX = document.getElementById("spellSFX");
+spellSFX.volume = 0.2;
+//#endregion
+
+//#region global variables for battle purposes
 let choice = 0;
 let defenseModifier, attackModifier;
 let pokemonImage;
@@ -17,9 +31,12 @@ let weapon;
 let weaponDices;
 let pokemonHealth, maxPokemonHealth;
 let playerHealth;
+//#endregion
 
 // const c = document.getElementById("fightBox");
 // let ctx = c.getContext("2d");
+
+//#region Random functions
 
 function GetRandomInt(min, max) {
   const minNum = Math.ceil(min);
@@ -51,47 +68,6 @@ async function GetPokemonInfo() {
   return pokemon;
 }
 
-let selectedIndex = 0;
-
-function updateSelection() {
-  // Remove the 'selected' class from all items
-  possibleChoices.forEach((item) => item.classList.remove("selected"));
-  // Add the 'selected' class to the current item
-  possibleChoices[selectedIndex].classList.add("selected");
-}
-
-function OptionSelection() {
-  return new Promise((resolve) => {
-    battleDialogue.addEventListener("keydown", KeySelect);
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        battleDialogue.removeEventListener("keydown", KeySelect);
-        resolve();
-      }
-    });
-
-    updateSelection();
-    battleDialogue.focus();
-  });
-}
-
-function KeySelect(event) {
-  if (event.key === "ArrowDown") {
-    // Move down to the next item
-    selectedIndex = (selectedIndex + 1) % possibleChoices.length; // Loop back to the top
-    updateSelection();
-  } else if (event.key === "ArrowUp") {
-    // Move up to the previous item
-    selectedIndex =
-      (selectedIndex - 1 + possibleChoices.length) % possibleChoices.length; // Loop back to the bottom
-    updateSelection();
-  } else if (event.key === "Enter") {
-    // Handle selection (e.g., display the selected option)
-    choice = selectedIndex;
-  }
-}
-
 function FadeScreen(screen, duration) {
   let opacity = 1;
   let interval = 25;
@@ -112,6 +88,114 @@ function FadeScreen(screen, duration) {
 function ChangeWindow() {
   window.open("../pages/Gameplay.html");
   window.close();
+}
+
+//#endregion
+
+//#region Arrow key selection methods
+
+let selectedIndex = 0;
+
+function updateSelection() {
+  possibleChoices.forEach((item) => item.classList.remove("selected"));
+  possibleChoices[selectedIndex].classList.add("selected");
+}
+
+function OptionSelection() {
+  return new Promise((resolve) => {
+    battleDialogue.addEventListener("keydown", KeySelect);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        spellSFX.play();
+        battleDialogue.removeEventListener("keydown", KeySelect);
+        resolve();
+      }
+    });
+
+    updateSelection();
+    battleDialogue.focus();
+  });
+}
+
+function KeySelect(event) {
+  if (event.key === "ArrowDown") {
+    // Move down to the next item
+    buttonSFX.play();
+    selectedIndex = (selectedIndex + 1) % possibleChoices.length; // Loop back to the top
+    updateSelection();
+  } else if (event.key === "ArrowUp") {
+    // Move up to the previous item
+    buttonSFX.play();
+    selectedIndex =
+      (selectedIndex - 1 + possibleChoices.length) % possibleChoices.length; // Loop back to the bottom
+    updateSelection();
+  } else if (event.key === "Enter") {
+    // Handle selection (e.g., display the selected option)
+    choice = selectedIndex;
+  }
+}
+//#endregion
+
+//#region Game Methods
+
+async function GetPokemonBestAttack(pokemon) {
+  const moves = pokemon.moves;
+
+  // Step 3: Iterate through each move and fetch the move's details
+  let mostPowerfulMove = null;
+  let maxPower = 0;
+
+  for (let move of moves) {
+    // Fetch the move details from the PokeAPI
+    const moveResponse = await fetch(move.move.url);
+    const moveDetails = await moveResponse.json();
+
+    // Step 4: Check if the move has a power stat and compare it to the most powerful move found
+    if (moveDetails.power && moveDetails.power > maxPower) {
+      mostPowerfulMove = moveDetails;
+      maxPower = moveDetails.power;
+    }
+  }
+
+  // Step 5: Return the most powerful move
+  if (mostPowerfulMove) {
+    return mostPowerfulMove; // Return the name of the most powerful move
+  } else {
+    return "No powerful move found";
+  }
+}
+
+async function GetSpellInfo(spell) {
+  const response = await fetch(`https://www.dnd5eapi.co${spell.url}`);
+  const spellDetails = await response.json();
+
+  return spellDetails.desc;
+}
+
+function FindWeapon() {
+  let isWeapon = false;
+  let weapon;
+  for (let equipment in character.Equipment) {
+    if (character.Equipment[equipment].option_type === "multiple") {
+      character.Equipment[equipment].items.forEach((item) => {
+        CheckEquipment(item);
+      });
+    } else {
+      CheckEquipment(character.Equipment[equipment]);
+    }
+  }
+
+  return weapon;
+}
+
+async function CheckEquipment(item) {
+  let response = await fetch(`https://www.dnd5eapi.co${item.of.url}`);
+  let equipment = await response.json();
+
+  if (equipment.equipment_category.name === "Weapon") {
+    weaponDices = equipment.damage.damage_dice;
+  }
 }
 
 async function GameOver() {
@@ -147,6 +231,10 @@ async function GameOver() {
     window.close();
   }
 }
+
+//#endregion
+
+//#region Draw battle box
 // function DrawFightBox() {
 //   // Step 1 - Create an image
 //   let img = new Image();
@@ -197,8 +285,9 @@ async function GameOver() {
 //   // Step 8 - Event listener for keyboard inputs
 //   window.addEventListener("keydown", movePlayer);
 // }
+//#endregion
 
-/* Battle Functionality methods */
+//#region Battle Functionality methods
 
 async function Battle(pokemon) {
   const fightBtn = document.getElementById("fight");
@@ -210,22 +299,17 @@ async function Battle(pokemon) {
   if (weaponDices === undefined) {
     weaponDices = "1d12";
   }
-  /* console for info */
 
-  console.log(character);
-  console.log(player);
-  console.log(pokemon);
-  console.log(bestMove);
-
-  fightBtn.addEventListener("click", FightOption);
-  actBtn.addEventListener("click", ChooseSpell);
+  fightBtn.addEventListener("click", FightOption); //fight button
+  actBtn.addEventListener("click", ChooseSpell); //act button
 }
 
 async function FightOption() {
+  buttonSFX.play();
   while (battleDialogue.firstChild) {
     battleDialogue.removeChild(battleDialogue.firstChild);
   }
-  console.log(weaponDices);
+
   //damage the pokemon
   let damage = CalculateDamage(character, weaponDices, "physical");
   pokemonHealth = decreaseHealth(
@@ -239,8 +323,7 @@ async function FightOption() {
   damageText.innerHTML = `You dealt ${damage} to ${pokemonName}!`;
   battleDialogue.appendChild(damageText);
 
-  //pokemon damage you
-  //DrawFightBox();
+  // when you defeat the pokemon
   if (pokemonHealth <= 0) {
     battleDialogue.innerHTML = `You defeated ${pokemonName}!`;
     const screen = document.getElementsByTagName("body");
@@ -278,34 +361,9 @@ async function PokemonAttack(move) {
   }, 1000);
 }
 
-function FindWeapon() {
-  let isWeapon = false;
-  let weapon;
-  for (let equipment in character.Equipment) {
-    if (character.Equipment[equipment].option_type === "multiple") {
-      character.Equipment[equipment].items.forEach((item) => {
-        CheckEquipment(item);
-      });
-    } else {
-      CheckEquipment(character.Equipment[equipment]);
-    }
-  }
-
-  return weapon;
-}
-
-async function CheckEquipment(item) {
-  let response = await fetch(`https://www.dnd5eapi.co${item.of.url}`);
-  let equipment = await response.json();
-
-  if (equipment.equipment_category.name === "Weapon") {
-    weaponDices = equipment.damage.damage_dice;
-  }
-}
-
 async function ChooseSpell() {
   battleDialogue.innerHTML = "";
-
+  buttonSFX.play();
   character.spells.forEach((spell) => {
     const spellOption = document.createElement(`div`);
     spellOption.innerHTML = spell.name;
@@ -338,13 +396,6 @@ async function ChooseSpell() {
   } else {
     await PokemonAttack(bestMove);
   }
-}
-
-async function GetSpellInfo(spell) {
-  const response = await fetch(`https://www.dnd5eapi.co${spell.url}`);
-  const spellDetails = await response.json();
-
-  return spellDetails.desc;
 }
 
 async function SelectedSpell() {
@@ -385,32 +436,13 @@ async function SelectedSpell() {
   }
 }
 
-function CalculateHealing(move) {
-  const healRoll = move.match(/(\d+)d(\d+)\s*\+\s*(\d+)?/);
-  let healing = 0;
-  let numDice = parseInt(healRoll[1], 10);
-  let numSides = parseInt(healRoll[2], 10);
-  let bonus = healRoll[3] ? parseInt(healRoll[3], 10) : 0;
-
-  if (bonus === "MOD") {
-    bonus = character.stats.Intelligence;
-  }
-
-  for (let roll = 0; roll < numDice; roll++) {
-    healing += GetRandomInt(1, numSides);
-  }
-
-  return healing + bonus;
-}
-
 function CalculateDamage(attacker, move, moveType) {
   let attackStat;
   let defenderDefense;
   let movePower;
   let attackerLevel;
 
-  console.log(move);
-
+  // this is calculates when im attacking
   if (attacker.name === character.name) {
     const attackRoll = move.match(/(\d+)d(\d+)\s*\+?\s*(\d+)?/);
     let numDice = parseInt(attackRoll[1], 10);
@@ -433,6 +465,7 @@ function CalculateDamage(attacker, move, moveType) {
     movePower = damageDealt * 7;
     attackerLevel = 30;
   } else {
+    //this is for when the
     let attackStatIndex;
     if (move.damage_class.name === "physical") {
       attackStatIndex = 1;
@@ -453,32 +486,26 @@ function CalculateDamage(attacker, move, moveType) {
       2
   );
 }
+//#endregion
 
-async function GetPokemonBestAttack(pokemon) {
-  const moves = pokemon.moves;
+//#region Healing and healthbar methods (thank you Poggie)
 
-  // Step 3: Iterate through each move and fetch the move's details
-  let mostPowerfulMove = null;
-  let maxPower = 0;
+function CalculateHealing(move) {
+  const healRoll = move.match(/(\d+)d(\d+)\s*\+\s*(\d+)?/);
+  let healing = 0;
+  let numDice = parseInt(healRoll[1], 10);
+  let numSides = parseInt(healRoll[2], 10);
+  let bonus = healRoll[3] ? parseInt(healRoll[3], 10) : 0;
 
-  for (let move of moves) {
-    // Fetch the move details from the PokeAPI
-    const moveResponse = await fetch(move.move.url);
-    const moveDetails = await moveResponse.json();
-
-    // Step 4: Check if the move has a power stat and compare it to the most powerful move found
-    if (moveDetails.power && moveDetails.power > maxPower) {
-      mostPowerfulMove = moveDetails;
-      maxPower = moveDetails.power;
-    }
+  if (bonus === "MOD") {
+    bonus = character.stats.Intelligence;
   }
 
-  // Step 5: Return the most powerful move
-  if (mostPowerfulMove) {
-    return mostPowerfulMove; // Return the name of the most powerful move
-  } else {
-    return "No powerful move found";
+  for (let roll = 0; roll < numDice; roll++) {
+    healing += GetRandomInt(1, numSides);
   }
+
+  return healing + bonus;
 }
 
 function updateHealthBar(health, maxHealth, characterHealthBar) {
@@ -502,15 +529,18 @@ function increaseHealth(amount, health, maxHealth, characterHealthBar) {
   updateHealthBar(health, maxHealth, characterHealthBar);
   return health;
 }
+//#endregion
 
 /* CALLING PLACE IS HERE BEFORE ARE FUNCTIONS */
 
 if (pokemonName === "necrozma") {
-  battleBG.style.backgroundImage = "url('../public/download.gif')";
+  //when the pokemon is necrozma
+  battleBG.style.backgroundImage = "url('../public/backgrounds/prism.gif')";
   battleOST.src =
     "../public/music/THE WORLD REVOLVING (Jevil's Theme) - Deltarune (Extended).mp3";
 } else if (pokemonName === "dragapult") {
-  battleBG.style.backgroundImage = "url('../public/barrier.gif')";
+  //when it is dragapult
+  battleBG.style.backgroundImage = "url('../public/backgrounds/barrier.gif')";
   battleOST.src =
     "../public/music/Undertale Ost_ 098 - Battle Against a True Hero.mp3";
 }
@@ -519,10 +549,10 @@ battleOST.load();
 battleOST.play();
 
 GetPokemonInfo().then((result) => {
-  pokemon = result;
-  pokemonHealth = pokemon.stats[0].base_stat * (player.difficulty / 3);
-  maxPokemonHealth = pokemonHealth;
-  playerHealth = character.health;
-  PopulateScreenInfo();
-  Battle(pokemon);
+  pokemon = result; //stores the pokemon info in global
+  pokemonHealth = pokemon.stats[0].base_stat * (player.difficulty / 3); //sets the pokemon health
+  maxPokemonHealth = pokemonHealth; //sets max pokemon health
+  playerHealth = character.health; //sets player max health
+  PopulateScreenInfo(); //populates all the initial info of the screen
+  Battle(pokemon); //battle actually starts
 });
