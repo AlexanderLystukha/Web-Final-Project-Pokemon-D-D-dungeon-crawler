@@ -692,7 +692,6 @@ const TextDialogue = [
 
 /* GAME STARTS THIS WAY */
 
-localStorage.removeItem("save");
 PopulatePlayerInfo(player, character);
 StartGame();
 let pageCount = 0;
