@@ -30,7 +30,30 @@ function PopulatePlayerInfo(player, character) {
   const newImage = character.image;
   playerImage.src = newImage;
 }
-// random logic for functionality
+
+//#region Random Methods
+function OpenInventory() {
+  if (invOpen) {
+    showTextDialogue(nextDialogueId);
+  } else {
+    dialogueBox.innerHTML = "<h4>Inventory</h4>";
+
+    Array.from().forEach((spell) => {
+      const spellOption = document.createElement(`div`);
+      spellOption.innerHTML = spell.name;
+      spellOption.classList.add(`choice`);
+      battleDialogue.appendChild(spellOption);
+    });
+  }
+}
+
+function ChangeWindow() {
+  window.open("../pages/Gameplay.html");
+  window.close();
+}
+//#endregion
+
+//#region selection functionality
 
 let selectedIndex = 0;
 
@@ -77,28 +100,9 @@ function KeySelect(event) {
       .map(Number);
   }
 }
+//#endregion
 
-function OpenInventory() {
-  if (invOpen) {
-    showTextDialogue(nextDialogueId);
-  } else {
-    dialogueBox.innerHTML = "<h4>Inventory</h4>";
-
-    Array.from().forEach((spell) => {
-      const spellOption = document.createElement(`div`);
-      spellOption.innerHTML = spell.name;
-      spellOption.classList.add(`choice`);
-      battleDialogue.appendChild(spellOption);
-    });
-  }
-}
-
-function ChangeWindow() {
-  window.open("../pages/Gameplay.html");
-  window.close();
-}
-
-// All functions for gameplay loop
+//#region All functions for gameplay loop
 async function showTextDialogue(dialogueIndex) {
   const dialogue = TextDialogue.find(
     (dialogue) => dialogue.id === dialogueIndex
@@ -131,16 +135,9 @@ function showOption(option) {
 
 function selectOption(option) {
   nextDialogueId = option.nextText;
+
   if (nextDialogueId <= 0) {
-    localStorage.removeItem("save");
-    localStorage.removeItem("inventory");
-    localStorage.removeItem("character");
-    if (nextDialogueId === -2) {
-      window.open("../index.html");
-      window.close();
-    } else {
-      setTimeout(ChangeWindow, 2000);
-    }
+    GameOver();
   }
 
   inventory = Object.assign(inventory, option.setInv);
@@ -168,7 +165,20 @@ function StartGame() {
   showTextDialogue(parseInt(localStorage.getItem("save")));
 }
 
-function GameOver() {}
+function GameOver() {
+  localStorage.removeItem("save");
+  localStorage.removeItem("inventory");
+  localStorage.removeItem("character");
+  if (nextDialogueId === -2) {
+    window.open("../index.html");
+    window.close();
+  } else {
+    setTimeout(ChangeWindow, 2000);
+  }
+}
+//#endregion
+
+//#region All the text nodes and options for the game
 const TextDialogue = [
   {
     id: 1,
@@ -678,7 +688,11 @@ const TextDialogue = [
     ],
   },
 ];
+//#endregion
 
+/* GAME STARTS THIS WAY */
+
+localStorage.removeItem("save");
 PopulatePlayerInfo(player, character);
 StartGame();
 let pageCount = 0;

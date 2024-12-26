@@ -2,65 +2,71 @@
 
 import { Character } from "../classes/character.js";
 
-$(document).ready(function () {
-  //Gets all the images
-  localStorage.removeItem("save");
-  localStorage.removeItem("inventory");
-  localStorage.removeItem("character");
-  const Images = document.querySelectorAll("img");
-  const Classes = Array.from(document.getElementsByClassName("Class"));
-  const Races = Array.from(document.getElementsByClassName("Race"));
-  let selectedClass,
-    selectedRace,
-    characterCreated = false;
-  let index = 0;
-  /* Lazy Loading Images observer */
-  LazyLoadImages(Images);
+//removes things from local storage incase it breaks
+localStorage.removeItem("save");
+localStorage.removeItem("inventory");
+localStorage.removeItem("character");
 
-  SelectCharacteristic(Classes, function (selectionName) {
-    selectedClass = selectionName;
-  });
-  SelectCharacteristic(Races, function (selectionName) {
-    selectedRace = selectionName;
-  });
+const Images = document.querySelectorAll("img");
+const Classes = Array.from(document.getElementsByClassName("Class"));
+const Races = Array.from(document.getElementsByClassName("Race"));
 
-  setInterval(() => {
-    CreateCharacter(selectedClass, selectedRace, characterCreated);
+let selectedClass,
+  selectedRace,
+  characterCreated = false;
+let index = 0;
 
-    if (
-      selectedClass != undefined &&
-      selectedRace != undefined &&
-      !characterCreated
-    ) {
-      const playerContainer = document.getElementById("PlayerContainer");
-      characterCreated = true;
-      const ready = document.createElement(`p`);
-      ready.textContent = "Please press enter to start!";
-      ready.style.color = " #c9a202";
+/* Lazy Loading Images observer */
+LazyLoadImages(Images);
 
-      playerContainer.appendChild(ready);
-
-      const colors = [
-        //array of colors for animation
-        "#c9a202",
-        "#000000",
-      ];
-
-      function changeColor() {
-        ready.style.color = colors[index];
-        index = (index + 1) % colors.length;
-      }
-
-      setInterval(changeColor, 250);
-
-      document.addEventListener("keydown", (event) => {
-        PressEnter(event, selectedClass);
-      });
-    }
-  }, 250);
+//needs callback to set the selected class and race
+SelectCharacteristic(Classes, function (selectionName) {
+  selectedClass = selectionName;
+});
+SelectCharacteristic(Races, function (selectionName) {
+  selectedRace = selectionName;
 });
 
+//always checks if player has chosen a character and race (skin)
+setInterval(() => {
+  CreateCharacter(selectedClass, selectedRace, characterCreated);
+
+  if (
+    selectedClass != undefined &&
+    selectedRace != undefined &&
+    !characterCreated
+  ) {
+    const playerContainer = document.getElementById("PlayerContainer");
+    characterCreated = true;
+    const ready = document.createElement(`p`);
+    ready.textContent = "Please press enter to start!";
+    ready.style.color = " #c9a202";
+
+    playerContainer.appendChild(ready);
+
+    const colors = [
+      //array of colors for animation
+      "#c9a202",
+      "#000000",
+    ];
+
+    function changeColor() {
+      ready.style.color = colors[index];
+      index = (index + 1) % colors.length;
+    }
+
+    setInterval(changeColor, 250);
+
+    document.addEventListener("keydown", (event) => {
+      PressEnter(event, selectedClass);
+    });
+  }
+}, 250);
+
+//#region Main Character Methods
+
 function SelectCharacteristic(characteristics, callback) {
+  //creates event listener for each class and race image
   characteristics.forEach((characteristic) => {
     characteristic.addEventListener("click", function () {
       characteristics.forEach((image) => {
@@ -93,53 +99,9 @@ function CreateCharacter(SelectedClass, SelectedRace) {
     playerGameName.textContent = `${player.name}, a ${SelectedRace} ${SelectedClass}`;
   }
 }
+//#endregion
 
-function LazyLoadImages(images) {
-  const observerIMG = new IntersectionObserver((entries, observerIMG) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        //TODO: make a check thing to see if the image exists
-        const img = entry.target;
-
-        img.src = img.dataset.src;
-
-        observerIMG.unobserve(img);
-      }
-    });
-  });
-
-  images.forEach((image) => observerIMG.observe(image));
-}
-
-function PressEnter(event, className) {
-  if (event.key === "Enter") {
-    document.removeEventListener("keydown", PressEnter);
-
-    const stats = {
-      Strength: 0,
-      Dexterity: 0,
-      Constitution: 0,
-      Intelligence: 0,
-      Wisdom: 0,
-      Charisma: 0,
-    };
-
-    GetCharacterThings(className, stats);
-    setTimeout(ChangeWindow, 500);
-  }
-}
-
-function ChangeWindow() {
-  window.open("../pages/Equipment.html");
-  window.close();
-}
-
-function GetRandomInt(min, max) {
-  const minNum = Math.ceil(min);
-  const maxNum = Math.floor(max);
-  return Math.floor(Math.random() * (maxNum - minNum + 1) + minNum);
-}
-
+//#region Getting Character Info
 function CheckValidSpellForLevel(spell) {
   if (spell.level <= 3) {
     return spell;
@@ -231,3 +193,53 @@ function GenerateStats(stats) {
     }
   }
 }
+//#endregion
+
+//#region random methods
+function LazyLoadImages(images) {
+  const observerIMG = new IntersectionObserver((entries, observerIMG) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        //TODO: make a check thing to see if the image exists
+        const img = entry.target;
+
+        img.src = img.dataset.src;
+
+        observerIMG.unobserve(img);
+      }
+    });
+  });
+
+  images.forEach((image) => observerIMG.observe(image));
+}
+
+function PressEnter(event, className) {
+  if (event.key === "Enter") {
+    document.removeEventListener("keydown", PressEnter);
+
+    const stats = {
+      Strength: 0,
+      Dexterity: 0,
+      Constitution: 0,
+      Intelligence: 0,
+      Wisdom: 0,
+      Charisma: 0,
+    };
+
+    GetCharacterThings(className, stats);
+    setTimeout(ChangeWindow, 500);
+  }
+}
+
+function ChangeWindow() {
+  window.open("../pages/Equipment.html");
+  window.close();
+}
+
+function GetRandomInt(min, max) {
+  const minNum = Math.ceil(min);
+  const maxNum = Math.floor(max);
+  return Math.floor(Math.random() * (maxNum - minNum + 1) + minNum);
+}
+
+//#endregion

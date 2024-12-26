@@ -1,22 +1,24 @@
 "use strict";
 
-$(document).ready(async function () {
-  const player = JSON.parse(localStorage.getItem("player")).name;
-  const character = JSON.parse(localStorage.getItem("character"));
-  console.log(character);
-  $("#Name").text(player);
+const player = JSON.parse(localStorage.getItem("player")).name;
+const character = JSON.parse(localStorage.getItem("character"));
+console.log(character);
+$("#Name").text(player);
 
-  const chosenEquipment = [];
-  const equipmentChoices = JSON.parse(localStorage.getItem("equipment"));
-  console.log(equipmentChoices);
-  const equipmentContainer = document.getElementById("equipmentChoices");
+const chosenEquipment = [];
+const equipmentChoices = JSON.parse(localStorage.getItem("equipment"));
+console.log(equipmentChoices);
+const equipmentContainer = document.getElementById("equipmentChoices");
 
+async function Main() {
   for (let choice in equipmentChoices) {
+    //awaits for player choice
     let result = await DisplayChoices(
       equipmentChoices[choice],
       equipmentContainer
     );
 
+    //once chosen remove buttons
     let buttons = Array.from(document.getElementsByTagName("button"));
     buttons.forEach((button) => {
       button.remove();
@@ -26,7 +28,9 @@ $(document).ready(async function () {
       chosenEquipment.push(equipmentChoices[choice]);
       break;
     }
+    //removes the text choices
     document.getElementById("choicePrompt").remove();
+    //adds choice to the players equipment
     chosenEquipment.push(result);
   }
 
@@ -38,8 +42,10 @@ $(document).ready(async function () {
   screen[0].style.opacity = 1;
   FadeScreen(screen[0], 5000);
   setTimeout(ChangeWindow, 5000);
-});
+}
+//loops through all the equipment choices available for a class
 
+//#region Random Functions
 function FadeScreen(screen, duration) {
   let opacity = 1;
   let interval = 25;
@@ -61,7 +67,9 @@ function ChangeWindow() {
   window.open("../pages/Gameplay.html");
   window.close();
 }
+//#endregion
 
+//displays the buttons and text for the choice
 async function DisplayChoices(choice, equipmentContainer) {
   if (choice.from.options !== undefined) {
     const choiceTag = document.createElement(`p`);
@@ -83,6 +91,7 @@ async function DisplayChoices(choice, equipmentContainer) {
   return null;
 }
 
+//returns value of the button pressed
 function OptionSelection(choice) {
   return new Promise((resolve) => {
     document.addEventListener("click", (event) => {
@@ -95,9 +104,4 @@ function OptionSelection(choice) {
   });
 }
 
-//TODO:
-//make program wait for a button to be pressed
-
-//get the text content and do [value of the ascii character] - 97
-//that will give the option desired
-//return the object of said object
+Main();

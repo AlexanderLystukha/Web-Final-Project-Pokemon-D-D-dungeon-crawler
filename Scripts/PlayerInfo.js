@@ -2,36 +2,37 @@
 
 import { Player } from "../classes/player.js";
 
-$(document).ready(function () {
-  const duration = document.getElementById("duration");
-  $("#login").on("submit", function (event) {
-    $("#ageErr").hide();
-    $("#playerErr").hide();
+const duration = document.getElementById("duration");
+$("#login").on("submit", function (event) {
+  $("#ageErr").hide();
+  $("#playerErr").hide();
 
-    const player = document.getElementById("playerName").value;
-    const age = document.getElementById("ageID").value;
+  const player = document.getElementById("playerName").value;
+  const age = document.getElementById("ageID").value;
 
-    if (age < 18) {
-      event.preventDefault();
-      $("#ageErr").show();
-    }
+  //checks for age
+  if (age < 18) {
+    event.preventDefault();
+    $("#ageErr").show();
+  }
 
-    if (player === "") {
-      event.preventDefault();
-      $("#playerErr").show();
-    }
+  //checks if its not blank or empty
+  if (player === "") {
+    event.preventDefault();
+    $("#playerErr").show();
+  }
 
-    if (age >= 18 && player != "") {
-      event.preventDefault();
-      const gameDuration = duration.value;
-      const newPlayer = new Player(player, age, gameDuration);
-      localStorage.setItem("player", JSON.stringify(newPlayer));
-      console.log(newPlayer);
-      SubmitSuccessful();
-    }
-  });
-  duration.addEventListener("input", DisplayDuration);
+  //when both fields are satisfactory do this
+  if (age >= 18 && player != "") {
+    event.preventDefault();
+    const gameDuration = duration.value;
+    const newPlayer = new Player(player, age, gameDuration);
+    localStorage.setItem("player", JSON.stringify(newPlayer));
+    console.log(newPlayer);
+    SubmitSuccessful();
+  }
 });
+duration.addEventListener("input", DisplayDuration);
 
 function SubmitSuccessful() {
   let index = 0;
