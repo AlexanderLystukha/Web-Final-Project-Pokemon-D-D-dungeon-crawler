@@ -1,6 +1,8 @@
 "use strict";
 
 let inventory = {};
+let invOpen = false;
+let nextDialogueId;
 
 const player = JSON.parse(localStorage.getItem("player"));
 const character = JSON.parse(localStorage.getItem("character"));
@@ -50,11 +52,11 @@ function OptionSelection() {
 }
 
 function KeySelect(event) {
-  if (event.key === "ArrowDown") {
+  if (event.key === "ArrowRight") {
     // Move down to the next item
     selectedIndex = (selectedIndex + 1) % possibleChoices.length; // Loop back to the top
     updateSelection();
-  } else if (event.key === "ArrowUp") {
+  } else if (event.key === "ArrowLeft") {
     // Move up to the previous item
     selectedIndex =
       (selectedIndex - 1 + possibleChoices.length) % possibleChoices.length; // Loop back to the bottom
@@ -64,6 +66,13 @@ function KeySelect(event) {
     choice = possibleChoices[selectedIndex].textContent
       .match(/\d+/g)
       .map(Number);
+  }
+}
+
+function OpenInventory() {
+  if (invOpen) {
+    showTextDialogue(nextDialogueId);
+  } else {
   }
 }
 
@@ -99,7 +108,7 @@ function showOption(option) {
 }
 
 function selectOption(option) {
-  const nextDialogueId = option.nextText;
+  nextDialogueId = option.nextText;
   if (nextDialogueId <= 0) {
     localStorage.removeItem("save");
     return StartGame();
@@ -121,17 +130,16 @@ function selectOption(option) {
 
 function StartGame() {
   if (localStorage.getItem("save") == null) {
-    console.log("hi");
     localStorage.setItem("save", 1);
     inventory = {};
   } else {
     inventory = JSON.parse(localStorage.getItem("inventory"));
   }
 
-  console.log(inventory);
   showTextDialogue(parseInt(localStorage.getItem("save")));
 }
 
+function GameOver() {}
 const TextDialogue = [
   {
     id: 1,

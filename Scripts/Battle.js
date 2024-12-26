@@ -11,6 +11,8 @@ let defenseModifier, attackModifier;
 let pokemonImage;
 let pokemon;
 let bestMove;
+let weapon;
+let weaponDices;
 let pokemonHealth, maxPokemonHealth;
 let playerHealth;
 
@@ -112,6 +114,8 @@ function ChangeWindow() {
 
 async function GameOver() {
   battleDialogue.innerHTML = "You died...<br><br>Restart?";
+  document.getElementById("fight").remove();
+  document.getElementById("act").remove();
   let restartOptions = ["Yes", "No"];
 
   for (let restartOption in restartOptions) {
@@ -195,7 +199,11 @@ async function Battle(pokemon) {
   const actBtn = document.getElementById("act");
 
   bestMove = await GetPokemonBestAttack(pokemon);
+  await FindWeapon();
 
+  if (weaponDices === undefined) {
+    weaponDices = "1d12";
+  }
   /* console for info */
 
   console.log(character);
@@ -211,29 +219,9 @@ async function FightOption() {
   while (battleDialogue.firstChild) {
     battleDialogue.removeChild(battleDialogue.firstChild);
   }
-
-  let weapon;
-  let isWeapon = false;
-  console.log(character.Equipment);
-  for (let equipment in character.Equipment) {
-    if (character.Equipment[equipment].option_type === "multiple") {
-      character.Equipment[equipment].items.forEach((item) => {
-        isWeapon = CheckEquipment(item);
-      });
-    } else {
-      isWeapon = CheckEquipment(equipment);
-    }
-
-    if (isWeapon) {
-      weapon = equipment;
-      break;
-    }
-  }
-
-  let attackRoll = await GetWeaponDamage(weapon);
-
+  console.log(weaponDices);
   //damage the pokemon
-  let damage = CalculateDamage(character, attackRoll);
+  let damage = CalculateDamage(character, weaponDices, "physical");
   pokemonHealth = decreaseHealth(
     damage,
     pokemonHealth,
@@ -252,16 +240,16 @@ async function FightOption() {
     const screen = document.getElementsByTagName("body");
     screen[0].style.opacity = 1;
     FadeScreen(screen[0], 3000);
-    setTimeout(ChangeWindow, 3000);
+    await setTimeout(ChangeWindow, 3000);
+  } else {
+    await PokemonAttack(bestMove, character);
   }
-
-  await PokemonAttack(bestMove, character);
 }
 
 async function PokemonAttack(move) {
   setTimeout(() => {
     //if (hit) {
-    let damage = CalculateDamage(pokemon, move);
+    let damage = CalculateDamage(pokemon, move, "physical");
     playerHealth = decreaseHealth(
       damage,
       playerHealth,
@@ -284,18 +272,30 @@ async function PokemonAttack(move) {
   }, 1000);
 }
 
-async function CheckEquipment(item) {
-  let response = await fetch(`https://www.dnd5eapi.co${item.of.url}`);
-  let equipment = response.json();
-
-  if (equipment.equipment_category.name === "Weapon") {
-    return true;
-  } else {
-    return false;
+function FindWeapon() {
+  let isWeapon = false;
+  let weapon;
+  for (let equipment in character.Equipment) {
+    if (character.Equipment[equipment].option_type === "multiple") {
+      character.Equipment[equipment].items.forEach((item) => {
+        CheckEquipment(item);
+      });
+    } else {
+      CheckEquipment(character.Equipment[equipment]);
+    }
   }
+
+  return weapon;
 }
 
-function GetWeaponDamage(weapon) {}
+async function CheckEquipment(item) {
+  let response = await fetch(`https://www.dnd5eapi.co${item.of.url}`);
+  let equipment = await response.json();
+
+  if (equipment.equipment_category.name === "Weapon") {
+    weaponDices = equipment.damage.damage_dice;
+  }
+}
 
 async function ChooseSpell() {
   battleDialogue.innerHTML = "";
@@ -311,7 +311,15 @@ async function ChooseSpell() {
   possibleChoices = document.querySelectorAll(`.choice`);
   await OptionSelection();
   await SelectedSpell();
-  await PokemonAttack(bestMove);
+  if (pokemonHealth <= 0) {
+    battleDialogue.innerHTML = `You defeated ${pokemonName}!`;
+    const screen = document.getElementsByTagName("body");
+    screen[0].style.opacity = 1;
+    FadeScreen(screen[0], 3000);
+    await setTimeout(ChangeWindow, 3000);
+  } else {
+    await PokemonAttack(bestMove);
+  }
 }
 
 async function SelectedSpell() {
@@ -353,7 +361,7 @@ async function SelectedSpell() {
 }
 
 function CalculateHealing(move) {
-  const healRoll = move.match(/(\d+)d(\d+)\s*\+\s*(\d+)/);
+  const healRoll = move.match(/(\d+)d(\d+)\s*\+\s*(\d+)?/);
   let healing = 0;
   let numDice = parseInt(healRoll[1], 10);
   let numSides = parseInt(healRoll[2], 10);
@@ -376,12 +384,19 @@ function CalculateDamage(attacker, move, moveType) {
   let movePower;
   let attackerLevel;
 
+  console.log(move);
+
   if (attacker.name === character.name) {
-    let attackRoll = move.match(/(\d+)d(\d+)/);
+    const attackRoll = move.match(/(\d+)d(\d+)\s*\+?\s*(\d+)?/);
+    let numDice = parseInt(attackRoll[1], 10);
+    let numSides = parseInt(attackRoll[2], 10);
+    let bonus = attackRoll[3] ? parseInt(attackRoll[3], 10) : 0;
     let damageDealt = 0;
-    for (let roll = 0; roll < attackRoll[1]; roll++) {
-      damageDealt += GetRandomInt(1, attackRoll[2]);
+    for (let roll = 0; roll < numDice; roll++) {
+      damageDealt += GetRandomInt(1, numSides);
     }
+
+    damageDealt += bonus;
 
     if (moveType === "spell") {
       attackStat = (attacker.stats.Intelligence + 10) * 4;
@@ -390,7 +405,7 @@ function CalculateDamage(attacker, move, moveType) {
       attackStat = (attacker.stats.Strength + 10) * 4;
       defenderDefense = pokemon.stats[2].base_stat;
     }
-    movePower = damageDealt * 4;
+    movePower = damageDealt * 7;
     attackerLevel = 30;
   } else {
     let attackStatIndex;
@@ -402,7 +417,7 @@ function CalculateDamage(attacker, move, moveType) {
 
     movePower = move.power;
     attackStat = attacker.stats[attackStatIndex].base_stat;
-    defenderDefense = ((character.stats.Dexterity - 10) / 2 + 10) * 4;
+    defenderDefense = ((character.stats.Dexterity - 10) / 2 + 10) * 7;
     attackerLevel = 40;
   }
 
@@ -445,7 +460,6 @@ async function GetPokemonBestAttack(pokemon) {
 function updateHealthBar(health, maxHealth, characterHealthBar) {
   const healthBar = document.getElementById(characterHealthBar);
   // update the width dynamically
-  console.log(health * 100);
   healthBar.style.width = `${(health * 100) / maxHealth}%`;
 }
 
@@ -461,7 +475,6 @@ function decreaseHealth(amount, health, maxHealth, characterHealthBar) {
 function increaseHealth(amount, health, maxHealth, characterHealthBar) {
   // Pro Tip 👉 Prevent health from going above 100
   health = Math.min(100, health + amount);
-  console.log(maxHealth);
   updateHealthBar(health, maxHealth, characterHealthBar);
   return health;
 }
