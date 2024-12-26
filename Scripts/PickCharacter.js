@@ -4,6 +4,9 @@ import { Character } from "../classes/character.js";
 
 $(document).ready(function () {
   //Gets all the images
+  localStorage.removeItem("save");
+  localStorage.removeItem("inventory");
+  localStorage.removeItem("character");
   const Images = document.querySelectorAll("img");
   const Classes = Array.from(document.getElementsByClassName("Class"));
   const Races = Array.from(document.getElementsByClassName("Race"));

@@ -5,6 +5,8 @@ const character = JSON.parse(localStorage.getItem("character"));
 const pokemonName = localStorage.getItem("pokemon");
 const initialDialogue = localStorage.getItem("prompt");
 const battleDialogue = document.getElementById("battleDialogue");
+const battleOST = document.getElementById("battleMusic");
+const battleBG = document.getElementById("battle");
 let possibleChoices = document.querySelectorAll(`.choice`);
 let choice = 0;
 let defenseModifier, attackModifier;
@@ -113,6 +115,10 @@ function ChangeWindow() {
 }
 
 async function GameOver() {
+  battleOST.src =
+    "../public/music/Pokemon Black & White Music_ Unwavering Emotions.mp3";
+  battleOST.load();
+  battleOST.play();
   battleDialogue.innerHTML = "You died...<br><br>Restart?";
   document.getElementById("fight").remove();
   document.getElementById("act").remove();
@@ -266,7 +272,7 @@ async function PokemonAttack(move) {
     ).innerHTML = `${playerHealth}<span id="maxHealth">/100</span>`;
 
     if (playerHealth <= 0) {
-      GameOver();
+      setTimeout(GameOver, 1500);
     }
     // }
   }, 1000);
@@ -304,7 +310,19 @@ async function ChooseSpell() {
     const spellOption = document.createElement(`div`);
     spellOption.innerHTML = spell.name;
     spellOption.classList.add(`choice`);
-    battleDialogue.appendChild(spellOption);
+    const spellInfo = document.createElement(`div`);
+    spellInfo.classList.add(`spellInfo`);
+
+    GetSpellInfo(spell).then((info) => {
+      spellInfo.innerHTML = info;
+    });
+
+    const spellBox = document.createElement(`div`);
+    spellBox.classList.add(`spellBox`);
+
+    spellBox.appendChild(spellOption);
+    spellBox.appendChild(spellInfo);
+    battleDialogue.appendChild(spellBox);
   });
 
   selectedIndex = 0;
@@ -320,6 +338,13 @@ async function ChooseSpell() {
   } else {
     await PokemonAttack(bestMove);
   }
+}
+
+async function GetSpellInfo(spell) {
+  const response = await fetch(`https://www.dnd5eapi.co${spell.url}`);
+  const spellDetails = await response.json();
+
+  return spellDetails.desc;
 }
 
 async function SelectedSpell() {
@@ -415,18 +440,17 @@ function CalculateDamage(attacker, move, moveType) {
       attackStatIndex = 3;
     }
 
-    movePower = move.power;
+    movePower = move.power * (player.difficulty / 3);
     attackStat = attacker.stats[attackStatIndex].base_stat;
     defenderDefense = ((character.stats.Dexterity - 10) / 2 + 10) * 7;
     attackerLevel = 40;
   }
 
   return Math.floor(
-    ((((2 * attackerLevel) / 5 + 2) * attackStat * movePower) /
+    (((2 * attackerLevel) / 5 + 2) * attackStat * movePower) /
       defenderDefense /
       50 +
-      2) *
-      (player.difficulty / 3)
+      2
   );
 }
 
@@ -480,6 +504,19 @@ function increaseHealth(amount, health, maxHealth, characterHealthBar) {
 }
 
 /* CALLING PLACE IS HERE BEFORE ARE FUNCTIONS */
+
+if (pokemonName === "necrozma") {
+  battleBG.style.backgroundImage = "url('../public/download.gif')";
+  battleOST.src =
+    "../public/music/THE WORLD REVOLVING (Jevil's Theme) - Deltarune (Extended).mp3";
+} else if (pokemonName === "dragapult") {
+  battleBG.style.backgroundImage = "url('../public/barrier.gif')";
+  battleOST.src =
+    "../public/music/Undertale Ost_ 098 - Battle Against a True Hero.mp3";
+}
+
+battleOST.load();
+battleOST.play();
 
 GetPokemonInfo().then((result) => {
   pokemon = result;

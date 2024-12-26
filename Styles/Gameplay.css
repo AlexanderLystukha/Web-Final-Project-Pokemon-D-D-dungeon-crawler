@@ -32,7 +32,7 @@ body {
 }
 
 #playerImage {
-  width: 225px;
+  width: 275px;
   height: 300px;
   flex-shrink: 0;
   border: 7px solid #fff;
